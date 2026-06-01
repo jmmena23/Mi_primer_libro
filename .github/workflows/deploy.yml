@@ -1,0 +1,225 @@
+name: deploy-book
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  repository_dispatch:
+    types:
+      - deploy-book
+
+env:
+  # Opt in early to GitHub's Node 24 runtime for JavaScript actions.
+  # This avoids Node 20 deprecation warnings on official actions.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  deploy-book:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        run: |
+          git init .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --depth=1 origin "${GITHUB_SHA}"
+          git checkout --force FETCH_HEAD
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.12
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            pkg-config \
+            libcairo2-dev \
+            libpango1.0-dev \
+            pango1.0-tools
+
+      - name: Set up TeachBook environment
+        run: |
+          python scripts/setup_env.py --yes --profile --extras pdf
+
+      - name: Check UTF-8 encoding
+        env:
+          PYTHONUTF8: "1"
+        run: |
+          .venv/bin/python scripts/check_encoding.py
+
+      - name: Check static assets
+        run: |
+          .venv/bin/python scripts/optimize_static_assets.py --check
+
+      - name: Install PDF toolchain (same as local full setup)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          .venv/bin/python scripts/setup_latex.py --yes --full
+
+      - name: Generate PDF with CI/CD engine policy
+        run: |
+          .venv/bin/python scripts/export_pdf.py --engine auto
+
+      - name: Verify generated PDFs
+        run: |
+          .venv/bin/python - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, "scripts")
+          from pdf_names import pdf_filename_for_lang
+          langs = sorted(
+              path.stem.replace("_config_", "", 1)
+              for path in Path("book").glob("_config_*.yml")
+          )
+          missing = [
+              Path("book/_static") / pdf_filename_for_lang(lang)
+              for lang in langs
+              if not (Path("book/_static") / pdf_filename_for_lang(lang)).is_file()
+          ]
+          if missing:
+              for path in missing:
+                  print(f"Missing generated PDF: {path}")
+              raise SystemExit(1)
+          print("Generated PDFs:", ", ".join(pdf_filename_for_lang(lang) for lang in langs))
+          PY
+
+      - name: Build HTML book
+        run: |
+          .venv/bin/python scripts/build_book.py
+          # FAILSAFE: Ensure .nojekyll exists even if script skipped it
+          touch book/_build/html/.nojekyll
+
+      - name: Debug Build Output
+        run: |
+          echo "Listing build output structure:"
+          ls -R book/_build/html
+          echo "Checking for .nojekyll:"
+          ls -la book/_build/html/.nojekyll
+
+      - name: Package Pages artifact
+        run: |
+          tar \
+            --dereference \
+            --hard-dereference \
+            --directory book/_build/html \
+            -cvf "$RUNNER_TEMP/artifact.tar" \
+            .
+
+      - name: Upload artifact
+        id: upload-pages
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: ${{ runner.temp }}/artifact.tar
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        env:
+          ARTIFACT_ID: ${{ steps.upload-pages.outputs.artifact-id }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import sys
+          import time
+          import urllib.error
+          import urllib.request
+
+          api_url = os.environ.get("GITHUB_API_URL", "https://api.github.com")
+          repo = os.environ["GITHUB_REPOSITORY"]
+          token = os.environ["GITHUB_TOKEN"]
+          artifact_id = int(os.environ["ARTIFACT_ID"])
+          build_version = os.environ["GITHUB_SHA"]
+
+          def request_json(method, url, payload=None, auth_token=token):
+              headers = {
+                  "Accept": "application/vnd.github+json",
+                  "Authorization": f"Bearer {auth_token}",
+                  "User-Agent": "teachbook-pages-deploy",
+                  "X-GitHub-Api-Version": "2022-11-28",
+              }
+              data = None
+              if payload is not None:
+                  data = json.dumps(payload).encode("utf-8")
+                  headers["Content-Type"] = "application/json"
+              request = urllib.request.Request(
+                  url,
+                  data=data,
+                  headers=headers,
+                  method=method,
+              )
+              try:
+                  with urllib.request.urlopen(request, timeout=60) as response:
+                      body = response.read().decode("utf-8")
+              except urllib.error.HTTPError as error:
+                  body = error.read().decode("utf-8", errors="replace")
+                  raise RuntimeError(
+                      f"{method} {url} failed with HTTP {error.code}: {body}"
+                  ) from error
+              return json.loads(body) if body else {}
+
+          oidc_request = urllib.request.Request(
+              os.environ["ACTIONS_ID_TOKEN_REQUEST_URL"],
+              headers={
+                  "Accept": "application/json",
+                  "Authorization": (
+                      f"Bearer {os.environ['ACTIONS_ID_TOKEN_REQUEST_TOKEN']}"
+                  ),
+                  "User-Agent": "teachbook-pages-deploy",
+              },
+          )
+          with urllib.request.urlopen(oidc_request, timeout=60) as response:
+              oidc_token = json.loads(response.read().decode("utf-8"))["value"]
+
+          deployment = request_json(
+              "POST",
+              f"{api_url}/repos/{repo}/pages/deployments",
+              {
+                  "artifact_id": artifact_id,
+                  "pages_build_version": build_version,
+                  "oidc_token": oidc_token,
+              },
+          )
+          deployment_id = deployment.get("id") or build_version
+          status_url = deployment.get(
+              "status_url",
+              f"{api_url}/repos/{repo}/pages/deployments/{deployment_id}",
+          )
+          page_url = deployment.get("page_url", "")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"page_url={page_url}\n")
+
+          print(f"Created Pages deployment {deployment_id}")
+          if page_url:
+              print(f"Page URL: {page_url}")
+
+          final_failures = {
+              "deployment_cancelled",
+              "deployment_content_failed",
+              "deployment_failed",
+              "deployment_lost",
+              "deployment_perms_error",
+          }
+          for _ in range(120):
+              status_response = request_json("GET", status_url)
+              status = status_response.get("status")
+              print(f"Pages deployment status: {status}")
+              if status == "succeed":
+                  sys.exit(0)
+              if status in final_failures:
+                  raise RuntimeError(f"Pages deployment failed with status: {status}")
+              time.sleep(5)
+
+          raise RuntimeError("Pages deployment timed out")
+          PY
