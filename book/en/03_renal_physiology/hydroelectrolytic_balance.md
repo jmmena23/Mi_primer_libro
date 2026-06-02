@@ -1,6 +1,8 @@
-# Hydroelectrolytic Balance
+# Renal Physiology
 
-## Properties of Water
+## Hydroelectrolytic Balance
+
+### Properties of Water
 
 - Strong polarity: Polar molecules attract ions and other polar compounds, allowing them to dissociate.
 

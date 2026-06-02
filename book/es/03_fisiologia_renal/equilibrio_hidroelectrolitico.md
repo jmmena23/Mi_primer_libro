@@ -1,6 +1,8 @@
-# Equilibrio Hidroelectrolítico
+# Fisiología Renal
 
-## Propiedades del agua
+## Equilibrio Hidroelectrolítico
+
+### Propiedades del agua
 
 - Fuerte polaridad: Las moléculas polares atraen iones y otros compuestos polares permitiendo que se disocien. 
 
