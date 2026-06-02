@@ -1,8 +1,7 @@
-title: |
-  Fisiología Renal
-author: Álvaro Lozano Murciego y André Filipe Sales Mendes
+title: Fisiología Renal
+author: José Manuel Mena Valle
 copyright: "2026"
-logo: "_static/logo.png"
+logo: "_static/usal_logo.png"
 language: es
 exclude_patterns: ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints", "_build_*", "en/", "temp_build_*", "latex_templates*", "_TRASH*"]
 execute:
@@ -47,7 +46,7 @@ latex_docclass:
 latex:
   latex_engine: xelatex
   options: "spanish"
-  subtitle: "Curso para las Facultades de Ciencias y de Ciencias Químicas"    # Opcional: subtítulo del libro
+  #subtitle: "Curso para las Facultades de Ciencias y de Ciencias Químicas"    # Opcional: subtítulo del libro
   header_title: |
     Elaboración de libros electrónicos
     con código e IA

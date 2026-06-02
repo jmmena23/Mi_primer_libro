@@ -1,8 +1,7 @@
-title: |
-  Renal Physiology
-author: Álvaro Lozano Murciego and André Filipe Sales Mendes
+title: Renal Physiology
+author: José Manuel Mena Valle
 copyright: "2026"
-logo: "_static/logo.png"
+logo: "_static/usal_logo.png"
 language: en
 exclude_patterns: ["_build", "Thumbs.db", ".DS_Store", "**.ipynb_checkpoints", "_build_*", "es/","temp_build_*", "latex_templates*", "_TRASH*"]
 execute:
