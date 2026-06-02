@@ -1,7 +1,7 @@
 format: jb-book
 root: en/intro
 parts:
-  - caption: Sample
+  - caption: Chapters
     chapters:
     - file: en/03_renal_physiology/hydroelectrolytic_balance
     - file: en/93_bibliography

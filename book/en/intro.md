@@ -6,7 +6,6 @@ Welcome to **Renal Physiology**.
 In this book you will find:
 
 - Detailed analysis of hydroelectrolytic balance
-- Information on [how to cite](92_how_to_cite.md) and [licenses](91_licenses.md)
 
 ## PDF version
 

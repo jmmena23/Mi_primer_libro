@@ -1,7 +1,7 @@
 format: jb-book
 root: es/intro
 parts:
-  - caption: Muestra
+  - caption: Capítulos
     chapters:
     - file: es/03_fisiologia_renal/equilibrio_hidroelectrolitico
     - file: es/93_bibliografia

@@ -53,7 +53,7 @@ latex:
   institution: "Universidad de Salamanca"  # Opcional
   edition: "1ª Edición"               # Opcional
   cover_logo: "_static/usal_logo.png"  # Logo de la portada PDF; el logo web se configura arriba en `logo`
-  # isbn: "978-84-XXXXX-XX-X"         # Opcional: descomentar cuando se tenga
+  # isbn: "978-84-XXXXX-XX-X"         # Opcional: descoAhentar cuando se tenga
   doi: "10.5281/zenodo.20449102"
   preamble: |
     \usepackage[spanish]{babel}
