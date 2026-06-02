@@ -1,3 +1,4 @@
+````markdown
 # Teorema del Límite Central
 
 El Teorema del Límite Central (TLC) establece que la distribución de las medias muestrales de una población con varianza finita se aproxima a una distribución normal a medida que el tamaño de la muestra aumenta, independientemente de la forma de la distribución de la población original.
@@ -17,3 +18,5 @@ converge en distribución a una normal estándar $N(0,1)$ cuando $n \to \infty$.
 
 El tamaño de la muestra $n$ suele considerarse suficientemente grande para aplicar el TLC cuando $n \ge 30$.
 ```
+
+````

@@ -3,7 +3,7 @@ root: es/intro
 parts:
   - caption: Muestra
     chapters:
-    - file: es/teorema_limite_central
+    - file: es/03_fisiologia_renal/equilibrio_hidroelectrolitico
     - file: es/93_bibliografia
 # --- CAPÍTULOS OCULTOS TEMPORALMENTE ---
 # parts:
