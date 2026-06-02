@@ -909,39 +909,42 @@ def build_pdf_for_lang(lang, engine_name):
 
         dest_config = os.path.join(temp_root, "_config.yml")
         shutil.copy2(os.path.join(BOOK_DIR, config_file), dest_config)
-        
+
         dest_toc = os.path.join(temp_root, "_toc.yml")
         shutil.copy2(os.path.join(BOOK_DIR, toc_file), dest_toc)
-        
-        # Modify the temp TOC to skip intro.md
+
+        # Replace intro.md content with a minimal LaTeX placeholder so the web
+        # intro (download links, welcome text) does NOT appear in the PDF, while
+        # the TOC structure (chapters, parts) remains completely intact.
         try:
             with open(dest_toc, "r", encoding="utf-8") as f:
                 temp_toc = yaml.safe_load(f)
-            
-            if "root" in temp_toc and "intro" in temp_toc["root"]:
-                first_chapter = None
-                if "parts" in temp_toc and temp_toc["parts"]:
-                    part = temp_toc["parts"][0]
-                    if "chapters" in part and part["chapters"]:
-                        first_chapter = part["chapters"][0]["file"]
-                        part["chapters"].pop(0)
-                        if not part["chapters"]:
-                            temp_toc["parts"].pop(0)
-                        if not temp_toc["parts"]:
-                            del temp_toc["parts"]
-                elif "chapters" in temp_toc and temp_toc["chapters"]:
-                    first_chapter = temp_toc["chapters"][0]["file"]
-                    temp_toc["chapters"].pop(0)
-                    if not temp_toc["chapters"]:
-                        del temp_toc["chapters"]
-                
-                if first_chapter:
-                    temp_toc["root"] = first_chapter
-                    with open(dest_toc, "w", encoding="utf-8") as f:
-                        yaml.safe_dump(temp_toc, f, sort_keys=False)
-                    print(f"🔧 Root ajustado para ocultar intro en PDF: {first_chapter}")
+
+            if "root" in temp_toc and "intro" in str(temp_toc.get("root", "")):
+                intro_file = os.path.join(temp_root, temp_toc["root"] + ".md")
+                if os.path.exists(intro_file):
+                    # Read the config to get the book title
+                    title = "Fisiología Renal" if lang == "es" else "Renal Physiology"
+                    try:
+                        with open(dest_config, "r", encoding="utf-8") as fc:
+                            cfg = yaml.safe_load(fc)
+                            if cfg and "title" in cfg:
+                                title = cfg["title"]
+                    except Exception:
+                        pass
+                    # Write a minimal placeholder: title only, then a LaTeX
+                    # command to suppress the page so it is invisible in the PDF.
+                    placeholder = (
+                        f"# {title}\n\n"
+                        "```{raw} latex\n"
+                        "\\thispagestyle{empty}\n"
+                        "```\n"
+                    )
+                    with open(intro_file, "w", encoding="utf-8") as fi:
+                        fi.write(placeholder)
+                    print(f"🔧 Intro reemplazado por placeholder mínimo para PDF ({lang})")
         except Exception as e:
-            print(f"⚠️ No se pudo ocultar el intro en el TOC: {e}")
+            print(f"⚠️ No se pudo reemplazar el intro para PDF: {e}")
 
         # Sanitize config to prevent self-exclusion
         sanitize_config(dest_config)

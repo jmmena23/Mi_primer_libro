@@ -12,8 +12,8 @@ In this book you will find:
 You can also download the printable version of the book:
 
 ```{raw} html
-<ul>
-  <li><a href="../_static/RenalPhysiology.pdf" download="RenalPhysiology.pdf">Download PDF in English</a></li>
-  <li><a href="../_static/FisiologiaRenal.pdf" download="FisiologiaRenal.pdf">Descargar PDF en español</a></li>
+<ul class="download-pdf-list">
+  <li><a href="../_static/RenalPhysiology.pdf" download="RenalPhysiology.pdf"><i class="fas fa-download"></i> Download PDF in English</a></li>
+  <li><a href="../_static/FisiologiaRenal.pdf" download="FisiologiaRenal.pdf"><i class="fas fa-download"></i> Descargar PDF en español</a></li>
 </ul>
 ```

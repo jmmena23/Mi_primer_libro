@@ -263,8 +263,8 @@ function injectPDFButton(languages, rootPrefix) {
         });
 
         const pdfFilenames = {
-            "es": "ElaboracionDeLibrosElectronicosMedianteCodigoYAsistentesDeInteligenciaArtificial.pdf",
-            "en": "CreatingElectronicBooksWithCodeAndArtificialIntelligenceAssistants.pdf"
+            "es": "FisiologiaRenal.pdf",
+            "en": "RenalPhysiology.pdf"
         };
         const pdfFilename = pdfFilenames[lang] || `TeachBook_${lang}.pdf`;
         const pdfUrl = rootPrefix + `_static/${pdfFilename}`;

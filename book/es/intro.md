@@ -11,8 +11,8 @@ En este libro encontrarás:
 También puedes descargar la versión imprimible del libro:
 
 ```{raw} html
-<ul>
-  <li><a href="../_static/FisiologiaRenal.pdf" download="FisiologiaRenal.pdf">Descargar PDF en español</a></li>
-  <li><a href="../_static/RenalPhysiology.pdf" download="RenalPhysiology.pdf">Download PDF in English</a></li>
+<ul class="download-pdf-list">
+  <li><a href="../_static/FisiologiaRenal.pdf" download="FisiologiaRenal.pdf"><i class="fas fa-download"></i> Descargar PDF en español</a></li>
+  <li><a href="../_static/RenalPhysiology.pdf" download="RenalPhysiology.pdf"><i class="fas fa-download"></i> Download PDF in English</a></li>
 </ul>
 ```
