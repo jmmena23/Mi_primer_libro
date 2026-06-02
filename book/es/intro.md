@@ -10,5 +10,5 @@ En este libro encontrarás:
 
 También puedes descargar la versión imprimible del libro:
 
-- [Descargar PDF en español](../_static/ElaboracionDeLibrosElectronicosMedianteCodigoYAsistentesDeInteligenciaArtificial.pdf)
-- [Download PDF in English](../_static/CreatingElectronicBooksWithCodeAndArtificialIntelligenceAssistants.pdf)
+- [Descargar PDF en español](../_static/FisiologiaRenal.pdf)
+- [Download PDF in English](../_static/RenalPhysiology.pdf)

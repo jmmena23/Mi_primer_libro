@@ -4,7 +4,6 @@ parts:
   - caption: Chapters
     chapters:
     - file: en/03_renal_physiology/hydroelectrolytic_balance
-    - file: en/93_bibliography
 # --- CAPÍTULOS OCULTOS TEMPORALMENTE ---
 # parts:
 #   - caption: Tutorial
