@@ -47,9 +47,7 @@ latex:
   latex_engine: xelatex
   options: "english"
   #subtitle: "Course for the Faculties of Sciences and Chemical Sciences"       # Optional
-  header_title: |
-    Creating electronic books
-    with code and AI
+  header_title: Renal Physiology
   institution: "Universidad de Salamanca"  # Optional
   edition: "1st Edition"                # Optional
   cover_logo: "_static/usal_logo.png"  # PDF cover logo; the web logo is configured above in `logo`

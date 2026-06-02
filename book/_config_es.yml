@@ -47,9 +47,7 @@ latex:
   latex_engine: xelatex
   options: "spanish"
   #subtitle: "Curso para las Facultades de Ciencias y de Ciencias Químicas"    # Opcional: subtítulo del libro
-  header_title: |
-    Elaboración de libros electrónicos
-    con código e IA
+  header_title: Fisiología Renal
   institution: "Universidad de Salamanca"  # Opcional
   edition: "1ª Edición"               # Opcional
   cover_logo: "_static/usal_logo.png"  # Logo de la portada PDF; el logo web se configura arriba en `logo`
