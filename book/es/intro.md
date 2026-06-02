@@ -1,4 +1,3 @@
-```{only} html
 # Introducción
 
 Bienvenido a **Fisiología Renal**.
@@ -13,4 +12,3 @@ También puedes descargar la versión imprimible del libro:
 
 - [Descargar PDF en español](../_static/FisiologiaRenal.pdf)
 - [Download PDF in English](../_static/RenalPhysiology.pdf)
-```
